@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pokdeng",
+      "runtimeExecutable": "py",
+      "runtimeArgs": ["-m", "server.main"],
+      "port": 8000,
+      "autoPort": false
+    }
+  ]
+}

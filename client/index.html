@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ป๊อกเด้ง Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:wght@700;800&family=Sarabun:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- ===== หน้า Connect: เชื่อมต่อ server ครั้งเดียวตอนเปิดแอป ===== -->
+  <section id="connect-screen" class="screen">
+    <h1>ป๊อกเด้ง Online</h1>
+
+    <div class="lobby-card">
+      <label for="player-name-input">ชื่อผู้เล่น</label>
+      <input id="player-name-input" type="text" placeholder="ใส่ชื่อของคุณ" maxlength="20" />
+
+      <label for="server-address-input">ที่อยู่ server (เว้นว่างถ้าเล่นในวง LAN เดียวกัน)</label>
+      <input id="server-address-input" type="text" placeholder="เช่น 192.168.1.23 หรือ URL จาก tunnel" />
+
+      <div class="lobby-buttons">
+        <button id="connect-btn" class="btn btn-primary">เชื่อมต่อ</button>
+      </div>
+
+      <p id="connect-error" class="error-text"></p>
+    </div>
+  </section>
+
+  <!-- ===== หน้า Lobby: รายการห้อง real-time (หลังเชื่อมต่อสำเร็จ) ===== -->
+  <section id="room-list-screen" class="screen hidden">
+    <h1>ป๊อกเด้ง Online</h1>
+
+    <div id="room-list" class="room-list"></div>
+
+    <div class="lobby-buttons">
+      <button id="show-create-room-btn" class="btn btn-primary">สร้างห้องใหม่</button>
+    </div>
+
+    <div id="create-room-form" class="lobby-card hidden">
+      <label for="room-id-input">ชื่อห้อง</label>
+      <input id="room-id-input" type="text" placeholder="เช่น room1" maxlength="20" />
+
+      <!-- เลือกจำนวนเงินเริ่มต้นของห้อง ใช้เฉพาะตอนสร้างห้องใหม่เท่านั้น (คนที่ join ทีหลังได้ค่านี้ตามห้องอัตโนมัติ) -->
+      <label>เงินเริ่มต้นของห้อง</label>
+      <div id="stake-presets" class="lobby-buttons">
+        <button type="button" class="btn btn-secondary stake-preset-btn is-selected" data-stake="100">100</button>
+        <button type="button" class="btn btn-secondary stake-preset-btn" data-stake="500">500</button>
+        <button type="button" class="btn btn-secondary stake-preset-btn" data-stake="1000">1000</button>
+      </div>
+      <input id="stake-custom-input" type="number" min="1" placeholder="หรือกำหนดเอง" />
+
+      <div class="lobby-buttons">
+        <button id="create-room-btn" class="btn btn-primary">สร้างห้อง (เป็นเจ้ามือ)</button>
+      </div>
+    </div>
+
+    <p id="lobby-error" class="error-text"></p>
+  </section>
+
+  <!-- ===== หน้าเกมหลัก ===== -->
+  <section id="game-screen" class="screen hidden">
+    <header class="game-header">
+      <span id="room-label"></span>
+      <button id="start-round-btn" class="btn btn-primary hidden">เริ่มรอบใหม่</button>
+    </header>
+
+    <!-- โต๊ะวงกลม: ที่นั่งผู้เล่นทั้งหมด (ตัวเองอยู่ล่างกึ่งกลางเสมอ) + กองเงินกลางโต๊ะ -->
+    <div id="table-oval" class="table-oval">
+      <div id="table-center" class="table-center"></div>
+    </div>
+
+    <!-- ไพ่ในมือของตัวเอง -->
+    <div class="my-hand-section">
+      <h2>ไพ่ของคุณ</h2>
+      <div id="my-hand" class="card-row"></div>
+      <p id="my-status" class="status-text"></p>
+
+      <div id="betting-section" class="betting-section hidden">
+        <p>วางเดิมพัน (คงเหลือ: <span id="my-balance-label"></span>)</p>
+        <div class="bet-slider-row">
+          <input id="bet-slider" type="range" min="0" max="100" step="10" value="0" />
+          <span id="bet-amount-display" class="bet-amount-display">฿0</span>
+        </div>
+        <button id="place-bet-btn" class="btn btn-primary">วางเดิมพัน</button>
+      </div>
+
+      <div id="action-buttons" class="action-buttons hidden">
+        <button id="draw-btn" class="btn btn-primary">จั่วเพิ่ม</button>
+        <button id="stay-btn" class="btn btn-secondary">อยู่</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- overlay ชั้นบนสุดสำหรับเอฟเฟกต์ชั่วคราว เช่น ตราปั๊ม "ป๊อก!" กลางจอ -->
+  <div id="fx-layer" aria-hidden="true"></div>
+
+  <script src="js/socket.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
