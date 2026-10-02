@@ -1,109 +1,301 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ป๊อกเด้ง Online</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@700;800&family=Sarabun:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/animations.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b14">
+  <title>Pok Deng — Premium Multiplayer</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div id="app">
+    <div id="toast" class="toast"></div>
 
-  <!-- ===== หน้า Connect: เชื่อมต่อ server ครั้งเดียวตอนเปิดแอป ===== -->
-  <section id="connect-screen" class="screen">
-    <h1>ป๊อกเด้ง Online</h1>
-
-    <div class="lobby-card">
-      <label for="player-name-input">ชื่อผู้เล่น</label>
-      <input id="player-name-input" type="text" placeholder="ใส่ชื่อของคุณ" maxlength="20" />
-
-      <label for="server-address-input">ที่อยู่ server (เว้นว่างถ้าเล่นในวง LAN เดียวกัน)</label>
-      <input id="server-address-input" type="text" placeholder="เช่น 192.168.1.23 หรือ URL จาก tunnel" />
-
-      <div class="lobby-buttons">
-        <button id="connect-btn" class="btn btn-primary">เชื่อมต่อ</button>
-      </div>
-
-      <p id="connect-error" class="error-text"></p>
-    </div>
-  </section>
-
-  <!-- ===== หน้า Lobby: รายการห้อง real-time (หลังเชื่อมต่อสำเร็จ) ===== -->
-  <section id="room-list-screen" class="screen hidden">
-    <h1>ป๊อกเด้ง Online</h1>
-
-    <div id="room-list" class="room-list"></div>
-
-    <div class="lobby-buttons">
-      <button id="show-create-room-btn" class="btn btn-primary">สร้างห้องใหม่</button>
-    </div>
-
-    <div id="create-room-form" class="lobby-card hidden">
-      <label for="room-id-input">ชื่อห้อง</label>
-      <input id="room-id-input" type="text" placeholder="เช่น room1" maxlength="20" />
-
-      <!-- เลือกจำนวนเงินเริ่มต้นของห้อง ใช้เฉพาะตอนสร้างห้องใหม่เท่านั้น (คนที่ join ทีหลังได้ค่านี้ตามห้องอัตโนมัติ) -->
-      <label>เงินเริ่มต้นของห้อง</label>
-      <div id="stake-presets" class="lobby-buttons">
-        <button type="button" class="btn btn-secondary stake-preset-btn is-selected" data-stake="100">100</button>
-        <button type="button" class="btn btn-secondary stake-preset-btn" data-stake="500">500</button>
-        <button type="button" class="btn btn-secondary stake-preset-btn" data-stake="1000">1000</button>
-      </div>
-      <input id="stake-custom-input" type="number" min="1" placeholder="หรือกำหนดเอง" />
-
-      <div class="lobby-buttons">
-        <button id="create-room-btn" class="btn btn-primary">สร้างห้อง (เป็นเจ้ามือ)</button>
-      </div>
-    </div>
-
-    <p id="lobby-error" class="error-text"></p>
-  </section>
-
-  <!-- ===== หน้าเกมหลัก ===== -->
-  <section id="game-screen" class="screen hidden">
-    <header class="game-header">
-      <span id="room-label"></span>
-      <button id="start-round-btn" class="btn btn-primary hidden">เริ่มรอบใหม่</button>
-    </header>
-
-    <!-- โต๊ะวงกลม: ที่นั่งผู้เล่นทั้งหมด (ตัวเองอยู่ล่างกึ่งกลางเสมอ) + กองเงินกลางโต๊ะ -->
-    <div id="table-oval" class="table-oval">
-      <div id="table-center" class="table-center"></div>
-    </div>
-
-    <!-- ไพ่ในมือของตัวเอง -->
-    <div class="my-hand-section">
-      <h2>ไพ่ของคุณ</h2>
-      <div id="my-hand" class="card-row"></div>
-      <p id="my-status" class="status-text"></p>
-
-      <div id="betting-section" class="betting-section hidden">
-        <p>วางเดิมพัน (คงเหลือ: <span id="my-balance-label"></span>)</p>
-        <div class="bet-slider-row">
-          <input id="bet-slider" type="range" min="0" max="100" step="10" value="0" />
-          <span id="bet-amount-display" class="bet-amount-display">฿0</span>
+    <!-- CONNECT -->
+    <section id="connect-screen" class="screen screen-connect">
+      <div class="connect-orb orb-a"></div>
+      <div class="connect-orb orb-b"></div>
+      <div class="connect-card glass">
+        <div class="brand brand-xl">
+          <div class="brand-mark">♠</div>
+          <div>
+            <span class="brand-kicker">PREMIUM MULTIPLAYER</span>
+            <h1>POK <em>DENG</em></h1>
+          </div>
         </div>
-        <button id="place-bet-btn" class="btn btn-primary">วางเดิมพัน</button>
-      </div>
+        <p class="muted">Enter the table. Read the room. Make your move.</p>
 
-      <div id="action-buttons" class="action-buttons hidden">
-        <button id="draw-btn" class="btn btn-primary">จั่วเพิ่ม</button>
-        <button id="stay-btn" class="btn btn-secondary">อยู่</button>
+        <label class="field-label" for="player-name-input">PLAYER NAME</label>
+        <input id="player-name-input" class="input" maxlength="20" placeholder="Enter your nickname">
+
+        <label class="field-label" for="server-address-input">SERVER ADDRESS</label>
+        <input id="server-address-input" class="input" placeholder="Leave blank for LAN">
+
+        <button id="connect-btn" class="btn btn-primary btn-wide">
+          <span>ENTER LOBBY</span><b>→</b>
+        </button>
+        <p id="connect-error" class="error-text"></p>
+        <div class="connect-foot">8 seats · Real-time WebSocket · Mobile ready</div>
       </div>
+    </section>
+
+    <!-- APP SHELL -->
+    <div id="app-shell" class="hidden">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-mark small">♠</div>
+          <span>POK<br><b>DENG</b></span>
+        </div>
+        <nav class="side-nav">
+          <button class="nav-item active" data-nav="home"><span>⌂</span><small>Home</small></button>
+          <button class="nav-item" data-nav="rooms"><span>▦</span><small>Rooms</small></button>
+          <button class="nav-item" data-nav="events"><span>✦</span><small>Events</small></button>
+          <button class="nav-item" data-nav="shop"><span>◇</span><small>Shop</small></button>
+          <button class="nav-item" data-nav="settings"><span>⚙</span><small>Settings</small></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="live-dot"><i></i> LIVE</div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="mobile-brand">POK <em>DENG</em></div>
+          <div class="topbar-player">
+            <div id="top-avatar" class="avatar avatar-sm">P</div>
+            <div class="player-meta">
+              <strong id="top-player-name">Player</strong>
+              <span>LVL <b id="top-level">12</b></span>
+            </div>
+            <div class="level-wrap">
+              <div class="level-track"><i id="level-progress"></i></div>
+              <small>2,450 / 3,000 XP</small>
+            </div>
+          </div>
+          <div class="top-actions">
+            <div class="balance">
+              <span class="coin">◉</span>
+              <strong id="top-balance">1,250</strong>
+              <button class="plus-btn" id="coin-plus">+</button>
+            </div>
+            <button class="icon-btn" id="sound-toggle" title="Sound">♫</button>
+            <div class="avatar avatar-sm" id="top-avatar-2">P</div>
+          </div>
+        </header>
+
+        <!-- HOME -->
+        <section id="home-screen" class="page active-page">
+          <div class="page-heading">
+            <div>
+              <span class="eyebrow">WELCOME BACK</span>
+              <h2>Choose your table.</h2>
+              <p>Play classic Pok Deng with a premium competitive interface.</p>
+            </div>
+            <div class="connection-pill"><i></i> SERVER ONLINE</div>
+          </div>
+
+          <div class="hero-banner">
+            <div class="hero-copy">
+              <span class="event-tag">WEEKEND EVENT</span>
+              <h3>Royal Table<br><em>Tournament</em></h3>
+              <p>Climb the leaderboard and compete for the weekend prize pool.</p>
+              <button class="btn btn-gold" data-nav="events">VIEW EVENT <span>→</span></button>
+            </div>
+            <div class="hero-art">
+              <div class="hero-chip">♠</div>
+              <div class="hero-card card-hero card-red"><b>A</b><span>♥</span></div>
+              <div class="hero-card card-hero card-black"><b>K</b><span>♠</span></div>
+              <div class="hero-glow"></div>
+            </div>
+          </div>
+
+          <div class="quick-grid">
+            <button class="action-card action-blue" data-action="quick-play">
+              <div class="action-icon">⚡</div>
+              <div><span>FAST MATCH</span><h3>Play Now</h3><p>Jump into an open table</p></div>
+              <b class="arrow">→</b>
+            </button>
+            <button class="action-card action-pink" data-action="create">
+              <div class="action-icon">♛</div>
+              <div><span>PRIVATE</span><h3>Create Room</h3><p>Invite friends to your table</p></div>
+              <b class="arrow">→</b>
+            </button>
+            <button class="action-card action-gold" data-action="quick-play">
+              <div class="action-icon">◎</div>
+              <div><span>CLASSIC</span><h3>Quick Play</h3><p>Find a table instantly</p></div>
+              <b class="arrow">→</b>
+            </button>
+          </div>
+
+          <div class="section-row">
+            <div>
+              <span class="eyebrow">LIVE TABLES</span>
+              <h3>Popular rooms</h3>
+            </div>
+            <button class="text-btn" data-nav="rooms">View all →</button>
+          </div>
+          <div id="home-room-preview" class="room-grid compact"></div>
+        </section>
+
+        <!-- ROOMS -->
+        <section id="rooms-screen" class="page">
+          <div class="page-heading">
+            <div>
+              <span class="eyebrow">MULTIPLAYER</span>
+              <h2>Find a table.</h2>
+              <p>Choose your stake and join an open room.</p>
+            </div>
+            <button class="btn btn-pink" data-action="create">+ CREATE PRIVATE ROOM</button>
+          </div>
+          <div class="room-toolbar">
+            <div class="tabs" id="room-tabs">
+              <button class="tab active" data-filter="all">All Rooms</button>
+              <button class="tab" data-filter="beginner">Beginner</button>
+              <button class="tab" data-filter="popular">Popular</button>
+              <button class="tab" data-filter="vip">VIP</button>
+            </div>
+            <div class="search-box"><span>⌕</span><input id="room-search" placeholder="Search room ID..."></div>
+          </div>
+          <div id="room-list" class="room-grid"></div>
+          <div id="lobby-empty" class="empty-state hidden">No open rooms found.</div>
+        </section>
+
+        <!-- EVENTS -->
+        <section id="events-screen" class="page">
+          <div class="page-heading">
+            <div><span class="eyebrow">COMPETE</span><h2>Events & tournaments.</h2><p>Special tables, limited-time rewards and leaderboard races.</p></div>
+          </div>
+          <div class="event-grid">
+            <article class="event-card event-main">
+              <span class="event-tag">LIVE NOW</span><h3>Royal Table</h3><p>Weekend Tournament</p>
+              <div class="event-stat"><span>Prize Pool</span><b>50,000 ◉</b></div>
+              <div class="event-stat"><span>Players</span><b>128 / 256</b></div>
+              <button class="btn btn-gold" data-action="quick-play">JOIN EVENT →</button>
+            </article>
+            <article class="event-card"><span class="event-tag blue">DAILY</span><h3>Night Owls</h3><p>Double XP after 22:00</p><div class="event-icon">☾</div><button class="btn btn-outline">COMING SOON</button></article>
+            <article class="event-card"><span class="event-tag purple">VIP</span><h3>High Roller</h3><p>Minimum stake 5,000</p><div class="event-icon">♛</div><button class="btn btn-outline">LOCKED</button></article>
+          </div>
+        </section>
+
+        <!-- SHOP -->
+        <section id="shop-screen" class="page">
+          <div class="page-heading"><div><span class="eyebrow">COLLECTION</span><h2>Table shop.</h2><p>Cosmetics for your profile and table.</p></div></div>
+          <div class="shop-grid">
+            <article class="shop-card"><div class="shop-preview gold-preview">♠</div><h3>Royal Avatar Frame</h3><p>Premium profile frame</p><strong>1,200 ◉</strong><button class="btn btn-outline">BUY</button></article>
+            <article class="shop-card"><div class="shop-preview purple-preview">✦</div><h3>Neon Table Theme</h3><p>Electric purple felt</p><strong>2,500 ◉</strong><button class="btn btn-outline">BUY</button></article>
+            <article class="shop-card"><div class="shop-preview blue-preview">◆</div><h3>Blue Chip Set</h3><p>Animated betting chips</p><strong>1,800 ◉</strong><button class="btn btn-outline">BUY</button></article>
+          </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="settings-screen" class="page">
+          <div class="page-heading"><div><span class="eyebrow">PREFERENCES</span><h2>Settings.</h2><p>Customize your table experience.</p></div></div>
+          <div class="settings-card glass">
+            <div class="setting-row"><div><b>Sound effects</b><span>Cards, chips and notifications</span></div><button class="toggle on" data-toggle="sound"><i></i></button></div>
+            <div class="setting-row"><div><b>Reduce motion</b><span>Disable intensive UI animations</span></div><button class="toggle" data-toggle="motion"><i></i></button></div>
+            <div class="setting-row"><div><b>Show table tips</b><span>Helpful hints during a round</span></div><button class="toggle on"><i></i></button></div>
+          </div>
+        </section>
+
+        <!-- CREATE ROOM MODAL -->
+        <div id="create-modal" class="modal-backdrop hidden">
+          <div class="modal glass">
+            <button class="modal-close" data-close-modal>×</button>
+            <span class="eyebrow">PRIVATE TABLE</span><h2>Create a room.</h2><p class="muted">Set the starting balance and invite your friends.</p>
+            <label class="field-label">ROOM ID</label>
+            <input id="room-id-input" class="input" maxlength="20" placeholder="e.g. royal-room">
+            <label class="field-label">STARTING BALANCE</label>
+            <div class="stake-presets">
+              <button class="stake-btn active" data-stake="100">100</button>
+              <button class="stake-btn" data-stake="500">500</button>
+              <button class="stake-btn" data-stake="1000">1,000</button>
+            </div>
+            <input id="stake-custom-input" class="input" type="number" min="1" placeholder="Custom amount">
+            <button id="create-room-btn" class="btn btn-pink btn-wide">CREATE ROOM →</button>
+            <p id="lobby-error" class="error-text"></p>
+          </div>
+        </div>
+
+        <!-- WAITING ROOM -->
+        <section id="waiting-screen" class="page overlay-page">
+          <div class="waiting-head">
+            <button class="back-btn" data-action="back-lobby">←</button>
+            <div><span class="eyebrow">ROOM LOBBY</span><h2 id="waiting-room-title">ROOM</h2></div>
+            <div class="connection-pill"><i></i> PRIVATE TABLE</div>
+          </div>
+          <div class="waiting-layout">
+            <div class="waiting-table-wrap">
+              <div class="waiting-table">
+                <div class="table-logo">♠<small>POK DENG</small></div>
+                <div class="countdown"><span>STARTING</span><b id="waiting-countdown">--</b></div>
+                <div id="waiting-seats" class="waiting-seats"></div>
+              </div>
+            </div>
+            <aside class="room-panel glass">
+              <span class="eyebrow">TABLE DETAILS</span>
+              <div class="detail-line"><span>Room</span><b id="waiting-room-id">—</b></div>
+              <div class="detail-line"><span>Stake</span><b id="waiting-stake">—</b></div>
+              <div class="detail-line"><span>Players</span><b id="waiting-player-count">0/8</b></div>
+              <div class="divider"></div>
+              <p class="muted small">Ready is currently a local UI state. The existing server starts rounds from the dealer.</p>
+              <button id="ready-btn" class="btn btn-green btn-wide">✓ READY</button>
+              <button class="btn btn-danger btn-wide" data-action="back-lobby">LEAVE ROOM</button>
+            </aside>
+          </div>
+        </section>
+
+        <!-- GAME -->
+        <section id="game-screen" class="page game-page">
+          <div class="game-top">
+            <div><button class="back-btn" data-action="back-lobby">←</button><span id="room-label">ROOM</span></div>
+            <div class="phase-pill" id="game-phase">WAITING</div>
+            <button id="start-round-btn" class="btn btn-gold hidden">START ROUND</button>
+          </div>
+
+          <div id="table-oval" class="game-table">
+            <div class="table-ambient"></div>
+            <div class="table-center" id="table-center">
+              <div class="pot-label">POT</div>
+              <div id="pot-value" class="pot-value">฿0</div>
+              <div id="center-chips" class="center-chips"></div>
+            </div>
+            <div id="dealer-seat" class="game-seat dealer-seat"></div>
+            <div id="game-seats"></div>
+          </div>
+
+          <div class="my-panel glass">
+            <div class="my-panel-head">
+              <div><span class="eyebrow">YOUR HAND</span><div id="my-status" class="status-large">Waiting...</div></div>
+              <div class="my-balance"><span>BALANCE</span><b id="my-balance-label">฿0</b></div>
+            </div>
+            <div id="my-hand" class="my-hand"></div>
+
+            <div id="betting-section" class="controls-block hidden">
+              <div class="bet-row"><span>BET AMOUNT</span><strong id="bet-amount-display">฿0</strong></div>
+              <input id="bet-slider" type="range" min="0" max="100" step="10" value="0">
+              <button id="place-bet-btn" class="btn btn-gold btn-wide">PLACE BET</button>
+            </div>
+
+            <div id="action-buttons" class="game-actions hidden">
+              <button id="draw-btn" class="btn btn-primary btn-xl">DRAW <small>+ CARD</small></button>
+              <button id="stay-btn" class="btn btn-outline btn-xl">STAY</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-nav="home"><span>⌂</span><small>Home</small></button>
+        <button class="nav-item" data-nav="rooms"><span>▦</span><small>Rooms</small></button>
+        <button class="nav-item" data-nav="events"><span>✦</span><small>Events</small></button>
+        <button class="nav-item" data-nav="shop"><span>◇</span><small>Shop</small></button>
+        <button class="nav-item" data-nav="settings"><span>⚙</span><small>Settings</small></button>
+      </nav>
     </div>
-  </section>
+  </div>
 
-  <!-- overlay ชั้นบนสุดสำหรับเอฟเฟกต์ชั่วคราว เช่น ตราปั๊ม "ป๊อก!" กลางจอ -->
-  <div id="fx-layer" aria-hidden="true"></div>
-
+  <!-- Keep the repository's existing WebSocket implementation. -->
   <script src="js/socket.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
